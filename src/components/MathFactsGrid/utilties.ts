@@ -1,14 +1,9 @@
-export const getGridStyle = (size: number) => ({
-  gridTemplateColumns: `${Array(size + 1)
-    .fill("1fr")
-    .join(" ")} [end]`,
-  gridTemplateRows: `${Array(size + 1)
-    .fill("1fr")
-    .join(" ")} 2fr`,
-});
+import memoizeOne from "memoize-one";
 
-export const getRowCols = (size: number) => {
+const _getRowsCols = (size: number) => {
   return Array(size)
     .fill(0)
     .map((_, ix) => ix + 1);
 };
+
+export const getRowsCols = memoizeOne(_getRowsCols);

@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { useInterval, useTimeout } from "usehooks-ts";
 
-import { sizeAtom, gameStateAtom, getCardStateAtom } from "../atoms";
-import { getRowCols } from "../utilties";
+import { sizeAtom, gameStatusAtom, getCardStateAtom } from "../atoms";
+import { getRowsCols } from "../utilties";
 
-const preFlipDelay = 2500;
+const preFlipDelay = 1250;
 const postFlipDelay = 1000;
-const flipInterval = 100;
-const postGameDelay = 1000;
+const flipInterval = 50;
+// const postGameDelay = 1000;
 
 export const usePreGamePostGame = () => {
   const size = useRecoilValue(sizeAtom);
-  const [gameState, setGameState] = useRecoilState(gameStateAtom);
+  const [gameStatus, setGameStatus] = useRecoilState(gameStatusAtom);
   const [boardFlipIndex, setBoardFlipIndex] = useState(0);
-  const rowsCols = getRowCols(size);
+  const rowsCols = getRowsCols(size);
 
   const flipCards = useRecoilCallback(
     ({ set }) =>
@@ -31,24 +31,42 @@ export const usePreGamePostGame = () => {
   );
 
   useTimeout(() => {
-    setGameState("pre");
+    setGameStatus("pre");
   }, preFlipDelay);
 
   useInterval(
     () => {
       setBoardFlipIndex((boardFlipIndex + 1) % (size * size));
     },
-    gameState === "pre" && boardFlipIndex < size * 2 ? flipInterval : null
+    gameStatus === "pre" && boardFlipIndex < size * 2 ? flipInterval : null
   );
 
   useEffect(() => {
+    let timeout: number | null = null;
     if (boardFlipIndex) {
       flipCards(boardFlipIndex);
     }
     if (boardFlipIndex === size * 2) {
-      setTimeout(() => {
-        setGameState("in");
+      timeout = setTimeout(() => {
+        console.log("setting game to in");
+        setGameStatus("in");
       }, postFlipDelay);
     }
-  }, [boardFlipIndex, flipCards, setGameState, size]);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [boardFlipIndex, flipCards, setGameStatus, size]);
+
+  const onReplay = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(gameStatusAtom, "init");
+      },
+    [setGameStatus]
+  );
+
+  return { onReplay };
 };
