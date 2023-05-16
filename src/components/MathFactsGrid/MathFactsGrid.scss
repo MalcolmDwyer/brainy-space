@@ -1,0 +1,121 @@
+.facts-grid {
+  position: relative;
+  margin: 1em;
+  font-family: "Open Sans", sans-serif;
+  color: #ddd;
+  transition: height 500ms ease-in-out;
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
+  .facts-grid:not(.finished) .grid {
+    height: 46vw;
+    font-size: 2.5vw;
+  }
+
+  .facts-grid.finished .grid {
+    height: 90vw;
+    font-size: 4vw;
+  }
+
+  .card.flipped:not(.active):hover {
+    transform: rotateY(180deg) translateX(-2px) !important;
+  }
+
+  .card:not(.flipped):not(.active):hover {
+    transform: none !important;
+  }
+}
+
+.facts-grid .grid {
+  /* position: absolute; */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: grid;
+  /* grid-gap: 5px; */
+  justify-content: center;
+}
+
+.facts-grid .grid-header:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.facts-grid .grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.facts-grid .grid-cell,
+.facts-grid .grid-header {
+  justify-self: stretch;
+  align-self: stretch;
+  cursor: pointer;
+}
+
+.facts-grid .grid-footer {
+  align-self: center;
+  justify-content: center;
+}
+
+.facts-grid input {
+  font-size: 4vh;
+  text-align: center;
+  width: 5em;
+}
+
+.grid-footer {
+  grid-column-start: 2;
+  grid-column-end: end;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate3d(0, 1, 0, 0deg);
+  }
+
+  to {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+.card {
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg) scale(1) translateZ(0px);
+  transform-origin: center;
+  position: relative;
+  transform: rotateY(0deg);
+  color: #222;
+  z-index: 0;
+}
+
+.card.notLocked figure {
+  opacity: 0.2;
+}
+
+.card.notHover figure {
+  opacity: 0.2;
+}
+
+.facts-grid.finished .card {
+  font-size: 3rem;
+}
+
+.card.flipped {
+  transform: rotateY(180deg) translateX(-2px);
+}
+
+.facts-grid:not(.finished) .card.active,
+.facts-grid:not(.finished) .card.flipped:hover {
+  transform: rotateY(180deg) scale(1.3) translateZ(-100px);
+  z-index: 1;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+}
+
+.facts-grid:not(.finished) .card:not(.flipped):hover {
+  transform: scale(1.3) translateZ(-100px);
+  z-index: 1;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+}

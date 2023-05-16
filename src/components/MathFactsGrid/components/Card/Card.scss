@@ -1,0 +1,32 @@
+.card figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background-color: #08c5ea; /*#cdf;*/
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  transition: background-color 0.5s ease-in;
+}
+
+.card.wrong:not(.done) figure {
+  background-color: #f88;
+}
+
+.card.active figure {
+  background-color: #adf;
+}
+
+.card.done figure {
+  background-color: #2af5b9; /*#afb;*/
+}
+
+.card .front {
+  transform: translateZ(1px);
+}
+.card .back {
+  transform: rotateY(180deg) translateZ(1px);
+}
