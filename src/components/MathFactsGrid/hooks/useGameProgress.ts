@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useRecoilCallback, useRecoilValue, useRecoilState } from "recoil";
 import {
   activeCardAtom,
+  activeFilter,
   sizeAtom,
   gameStatusAtom,
   getCardStateAtom,
@@ -12,9 +13,10 @@ import type { Coords } from "../types";
 
 export const useGameProgress = () => {
   const size = useRecoilValue(sizeAtom);
-  const status = useRecoilValue(gameStatusAtom);
+  const [status, setStatus] = useRecoilState(gameStatusAtom);
   const rowsCols = getRowsCols(size);
   const [activeCard, setActiveCard] = useRecoilState(activeCardAtom);
+  const { x: xFilter, y: yFilter } = useRecoilValue(activeFilter);
 
   const getNextActive = useRecoilCallback(
     ({ snapshot }) =>
@@ -24,7 +26,9 @@ export const useGameProgress = () => {
           rowsCols.forEach((y) => {
             if (
               snapshot.getLoadable(getCardStateAtom([x, y])).getValue() ===
-              "flipped"
+                "flipped" &&
+              (xFilter === null || xFilter === x) &&
+              (yFilter === null || yFilter === y)
             ) {
               possibles.push([x, y]);
             }
@@ -39,20 +43,13 @@ export const useGameProgress = () => {
     if (status === "in" && !activeCard) {
       const nextActive = getNextActive();
 
-      setActiveCard(nextActive);
-      // if (activeCard) {
-      //   setCardStatus(activeCard, "flipped");
-      // }
-      // setCardStatus(nextActive, "active");
-      // setActiveCard(getNextActive());
+      if (nextActive) {
+        setActiveCard(nextActive);
+      } else {
+        setStatus("post");
+      }
     }
-  }, [status, activeCard, getNextActive, setActiveCard]);
-
-  // useEffect(() => {
-  //   if (activeCard) {
-  //     setCardStatus(activeCard, "active");
-  //   }
-  // }, [activeCard, wrongCard]);
+  }, [status, activeCard, getNextActive, setActiveCard, setStatus]);
 
   return {
     activeCard,

@@ -1,5 +1,5 @@
 import { atom, atomFamily, selectorFamily } from "recoil";
-
+import { getRandomEmoji } from "./utilties";
 import type { operator, CardState, Coords } from "./types";
 
 export const opAtom = atom<operator>({
@@ -33,6 +33,26 @@ export const getCardValueAtom = selectorFamily<number, Coords>({
     },
 });
 
+export const emojiPartyIndexAtom = atom<number>({
+  key: "emojiPartyIndexAtom",
+  default: 0,
+});
+
+export const getCardDisplayAtom = selectorFamily<string, Coords>({
+  key: "getCardDisplayAtom",
+  get:
+    ([x, y]) =>
+    ({ get }) => {
+      const status = get(gameStatusAtom);
+      const emojiPartyIndex = get(emojiPartyIndexAtom);
+
+      if (status === "post" && emojiPartyIndex) {
+        return getRandomEmoji();
+      }
+      return get(getCardValueAtom([x, y])).toString();
+    },
+});
+
 export const activeCardAtom = atom<Coords | null>({
   key: "activeCardAtom",
   default: null,
@@ -41,4 +61,9 @@ export const activeCardAtom = atom<Coords | null>({
 export const wrongCardAtom = atom<Coords | null>({
   key: "wrongCardAtom",
   default: null,
+});
+
+export const activeFilter = atom<{ x: number | null; y: number | null }>({
+  key: "activeFilter",
+  default: { x: null, y: null },
 });

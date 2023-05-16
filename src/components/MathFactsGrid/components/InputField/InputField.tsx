@@ -9,7 +9,8 @@ export function InputField() {
   return (
     <input
       ref={inputRef}
-      type="text"
+      type="number"
+      min="1"
       onKeyUp={onKeyUp}
       placeholder={placeholder}
     />

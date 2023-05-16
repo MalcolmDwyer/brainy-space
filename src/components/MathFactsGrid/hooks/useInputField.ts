@@ -40,7 +40,6 @@ export const useInputField = ({ activeCard }: useInputFieldProps) => {
           }
           set(activeCardAtom, null);
         }
-        console.log("onAnswer", value);
       },
     []
   );
@@ -56,9 +55,7 @@ export const useInputField = ({ activeCard }: useInputFieldProps) => {
     [onAnswer]
   );
 
-  const placeholder = activeCard
-    ? `${activeCard[0]} × ${activeCard[1]}`
-    : "Click a card to start";
+  const placeholder = activeCard ? `${activeCard[0]} × ${activeCard[1]}` : "";
 
   return {
     placeholder,
