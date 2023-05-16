@@ -1,8 +1,7 @@
-import { useCallback } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
-import { activeFilter, gameStatusAtom, sizeAtom } from "./atoms";
-import { useGameProgress, usePreGamePostGame } from "./hooks";
+import { gameStatusAtom, sizeAtom } from "./atoms";
+import { useGameProgress, usePreGamePostGame, useRowColFilter } from "./hooks";
 import { getRowsCols } from "./utilties";
 
 import { Card, InputField } from "./components";
@@ -13,8 +12,8 @@ export function MathFactsGrid() {
   useGameProgress();
   const size = useRecoilValue(sizeAtom);
   const gameStatus = useRecoilValue(gameStatusAtom);
-  const setActiveFilter = useSetRecoilState(activeFilter);
   const { onReplay } = usePreGamePostGame();
+  const onFilterRowColumn = useRowColFilter();
 
   const rowsCols = getRowsCols(size);
 
@@ -40,17 +39,6 @@ export function MathFactsGrid() {
       .join(" ")} 2fr`,
   };
 
-  const onConstrainColumn = useCallback(
-    (n: number, isX: boolean) => {
-      if (isX) {
-        setActiveFilter({ x: n, y: null });
-      } else {
-        setActiveFilter({ x: null, y: n });
-      }
-    },
-    [setActiveFilter]
-  );
-
   return (
     <div className="facts-grid">
       <div className="grid" style={gridStyle}>
@@ -59,7 +47,7 @@ export function MathFactsGrid() {
           <div
             className="grid-header"
             key={`col_${y}`}
-            onClick={() => onConstrainColumn(y, false)}
+            onClick={() => onFilterRowColumn({ y })}
           >
             {y}
           </div>
@@ -68,7 +56,7 @@ export function MathFactsGrid() {
           <div key={`row_${x}`} style={{ display: "contents" }}>
             <div
               className="grid-header"
-              onClick={() => onConstrainColumn(x, true)}
+              onClick={() => onFilterRowColumn({ x })}
             >
               {x}
             </div>

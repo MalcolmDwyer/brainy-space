@@ -3,6 +3,7 @@ import {
   getCardStateAtom,
   getCardDisplayAtom,
   activeCardAtom,
+  activeFilterAtom,
   wrongCardAtom,
 } from "../../atoms";
 
@@ -13,6 +14,7 @@ export function Card({ x, y }: { x: number; y: number }) {
   const value = useRecoilValue(getCardDisplayAtom([x, y]));
   const [activeCard, setActiveCard] = useRecoilState(activeCardAtom);
   const wrongCard = useRecoilValue(wrongCardAtom);
+  const { x: xFilter, y: yFilter } = useRecoilValue(activeFilterAtom);
 
   const active = activeCard?.[0] === x && activeCard?.[1] === y;
   const wrong = wrongCard?.[0] === x && wrongCard?.[1] === y;
@@ -21,7 +23,9 @@ export function Card({ x, y }: { x: number; y: number }) {
 
   const className = `grid-cell card ${active ? "active" : ""} ${
     wrong ? "wrong" : ""
-  } ${!active && !wrong ? status : ""}`;
+  } ${!active && !wrong ? status : ""} ${
+    xFilter === x || yFilter === y ? "constrained" : ""
+  }`;
 
   const onClick = () => {
     setActiveCard([x, y]);

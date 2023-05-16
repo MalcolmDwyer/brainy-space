@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRecoilCallback, useRecoilValue, useRecoilState } from "recoil";
 import {
   activeCardAtom,
-  activeFilter,
+  activeFilterAtom,
   sizeAtom,
   gameStatusAtom,
   getCardStateAtom,
@@ -16,7 +16,8 @@ export const useGameProgress = () => {
   const [status, setStatus] = useRecoilState(gameStatusAtom);
   const rowsCols = getRowsCols(size);
   const [activeCard, setActiveCard] = useRecoilState(activeCardAtom);
-  const { x: xFilter, y: yFilter } = useRecoilValue(activeFilter);
+  const [activeFilter, setActiveFilter] = useRecoilState(activeFilterAtom);
+  const { x: xFilter, y: yFilter } = activeFilter;
 
   const getNextActive = useRecoilCallback(
     ({ snapshot }) =>
@@ -36,7 +37,7 @@ export const useGameProgress = () => {
         });
         return possibles[Math.floor(Math.random() * possibles.length)];
       },
-    [rowsCols]
+    [rowsCols, xFilter, yFilter]
   );
 
   useEffect(() => {
@@ -45,6 +46,8 @@ export const useGameProgress = () => {
 
       if (nextActive) {
         setActiveCard(nextActive);
+      } else if (xFilter !== null || yFilter !== null) {
+        setActiveFilter({ x: null, y: null });
       } else {
         setStatus("post");
       }

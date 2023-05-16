@@ -63,7 +63,7 @@ export const wrongCardAtom = atom<Coords | null>({
   default: null,
 });
 
-export const activeFilter = atom<{ x: number | null; y: number | null }>({
+export const activeFilterAtom = atom<{ x: number | null; y: number | null }>({
   key: "activeFilter",
   default: { x: null, y: null },
 });

@@ -12,6 +12,10 @@
   transition: background-color 0.5s ease-in;
 }
 
+.card.constrained figure {
+  border: 1px solid #2af5b9;
+}
+
 .card.wrong:not(.done) figure {
   background-color: #f88;
 }
