@@ -9,7 +9,12 @@ import {
 
 import "./Card.scss";
 
-export function Card({ x, y }: { x: number; y: number }) {
+interface CardProps {
+  x: number;
+  y: number;
+}
+
+export function Card({ x, y }: CardProps) {
   const status = useRecoilValue(getCardStateAtom([x, y]));
   const value = useRecoilValue(getCardDisplayAtom([x, y]));
   const [activeCard, setActiveCard] = useRecoilState(activeCardAtom);

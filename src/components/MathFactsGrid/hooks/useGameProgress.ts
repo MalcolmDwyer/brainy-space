@@ -52,7 +52,16 @@ export const useGameProgress = () => {
         setStatus("post");
       }
     }
-  }, [status, activeCard, getNextActive, setActiveCard, setStatus]);
+  }, [
+    status,
+    activeCard,
+    getNextActive,
+    setActiveCard,
+    setStatus,
+    xFilter,
+    yFilter,
+    setActiveFilter,
+  ]);
 
   return {
     activeCard,

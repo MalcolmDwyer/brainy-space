@@ -1,6 +1,6 @@
 import { atom, atomFamily, selectorFamily } from "recoil";
 import { getRandomEmoji } from "./utilties";
-import type { operator, CardState, Coords } from "./types";
+import type { operator, CardState, Coords, GameStatus } from "./types";
 
 export const opAtom = atom<operator>({
   key: "opAtom",
@@ -12,7 +12,7 @@ export const sizeAtom = atom<number>({
   default: 12,
 });
 
-export const gameStatusAtom = atom<"init" | "pre" | "in" | "post">({
+export const gameStatusAtom = atom<GameStatus>({
   key: "gameStatusAtom",
   default: "init",
 });
@@ -29,7 +29,13 @@ export const getCardValueAtom = selectorFamily<number, Coords>({
     ([x, y]) =>
     ({ get }) => {
       const op = get(opAtom);
-      return op === "mult" ? x * y : x + y;
+      if (op === "mult") {
+        return x * y;
+      } else if (op === "add") {
+        return x + y;
+      } else {
+        throw new Error(`Invalid operator: ${op}`);
+      }
     },
 });
 
