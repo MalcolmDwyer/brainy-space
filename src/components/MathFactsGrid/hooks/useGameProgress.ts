@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilCallback, useRecoilValue, useRecoilState } from "recoil";
 import {
   activeCardAtom,
@@ -6,6 +6,7 @@ import {
   sizeAtom,
   gameStatusAtom,
   getCardStateAtom,
+  opAtom,
 } from "../atoms";
 import { getRowsCols } from "../utilties";
 
@@ -13,11 +14,25 @@ import type { Coords } from "../types";
 
 export const useGameProgress = () => {
   const size = useRecoilValue(sizeAtom);
+  const op = useRecoilValue(opAtom);
   const [status, setStatus] = useRecoilState(gameStatusAtom);
   const rowsCols = getRowsCols(size);
   const [activeCard, setActiveCard] = useRecoilState(activeCardAtom);
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterAtom);
   const { x: xFilter, y: yFilter } = activeFilter;
+
+  const cardValue = useCallback(
+    ([x, y]: [x: number, y: number]) => {
+      if (op === "mult") {
+        return x * y;
+      } else if (op === "add") {
+        return x + y;
+      } else {
+        throw new Error(`Invalid operator: ${op}`);
+      }
+    },
+    [op]
+  );
 
   const getNextActive = useRecoilCallback(
     ({ snapshot }) =>
@@ -35,7 +50,20 @@ export const useGameProgress = () => {
             }
           });
         });
-        return possibles[Math.floor(Math.random() * possibles.length)];
+
+        // Sort by card value
+        possibles.sort((a, b) => (cardValue(a) < cardValue(b) ? -1 : 1));
+
+        // Weight cards into 4 bins so the lower numbers will be selected more often
+        // Use multiple copies of more likely cards to increase their weight
+        const numBins = 4;
+        const weightedPossibles = possibles.flatMap((coords, index, all) => {
+          const weight = numBins - Math.floor(numBins * (index / all.length));
+          return Array(weight).fill(coords);
+        });
+
+        const random = Math.floor(Math.random() * weightedPossibles.length);
+        return weightedPossibles[random];
       },
     [rowsCols, xFilter, yFilter]
   );
